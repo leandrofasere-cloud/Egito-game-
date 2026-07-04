@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desafio do Faraó - Egito Antigo</title>
+<style>
+/* ============================================
+   DESAFIO DO FARAÓ - EGITO ANTIGO
+   Jogo Educativo para 6º Ano do Ensino Fundamental
+   ============================================ */
+
+/* ---- RESET & BASE ---- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --gold: #D4A843; --gold-light: #F0D78C; --gold-dark: #B8860B;
+  --sand: #C4A882; --sand-light: #E8D5B7; --sand-dark: #8B7355;
+  --papyrus: #F5E6C8; --papyrus-dark: #E8D5A0;
+  --nile-blue: #1E6F8C; --nile-light: #4A9BB8;
+  --desert-red: #C75B3A; --dark-bg: #1A1408; --text-dark: #2C1E0F;
+  --success: #4CAF50; --error: #D32F2F; --text-light: #F5E6C8;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--dark-bg); color: var(--text-dark);
+  min-height: 100vh; overflow-x: hidden; position: relative;
+}
+
+/* ---- BACKGROUND SCENE ---- */
+#bg-scene {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;
+  background: linear-gradient(180deg, #0D0B05 0%, #1A1408 40%, #2C1E0F 70%, #4A3A1F 100%);
+  overflow: hidden;
+}
+
+.stars {
+  position: absolute; width: 100%; height: 40%;
+  background-image: radial-gradient(2px 2px at 20px 30px, #FFF, transparent), radial-gradient(2px 2px at 50px 80px, #FFF, transparent), radial-gradient(1px 1px at 90px 40px, #FFF, transparent), radial-gradient(2px 2px at 130px 70px, #FFF, transparent), radial-gradient(1px 1px at 160px 20px, #FFF, transparent), radial-gradient(2px 2px at 200px 50px, #FFF, transparent), radial-gradient(1px 1px at 240px 90px, #FFF, transparent), radial-gradient(2px 2px at 280px 30px, #FFF, transparent), radial-gradient(1px 1px at 320px 60px, #FFF, transparent), radial-gradient(2px 2px at 360px 80px, #FFF, transparent), radial-gradient(1px 1px at 400px 40px, #FFF, transparent), radial-gradient(2px 2px at 440px 70px, #FFF, transparent), radial-gradient(1px 1px at 480px 20px, #FFF, transparent), radial-gradient(2px 2px at 520px 50px, #FFF, transparent), radial-gradient(1px 1px at 560px 90px, #FFF, transparent), radial-gradient(2px 2px at 600px 30px, #FFF, transparent), radial-gradient(1px 1px at 640px 60px, #FFF, transparent), radial-gradient(2px 2px at 680px 80px, #FFF, transparent), radial-gradient(1px 1px at 720px 40px, #FFF, transparent), radial-gradient(2px 2px at 760px 70px, #FFF, transparent), radial-gradient(1px 1px at 800px 20px, #FFF, transparent), radial-gradient(2px 2px at 840px 50px, #FFF, transparent), radial-gradient(1px 1px at 880px 90px, #FFF, transparent), radial-gradient(2px 2px at 920px 30px, #FFF, transparent), radial-gradient(1px 1px at 960px 60px, #FFF, transparent), radial-gradient(2px 2px at 1000px 80px, #FFF, transparent), radial-gradient(1px 1px at 1040px 40px, #FFF, transparent), radial-gradient(2px 2px at 1080px 70px, #FFF, transparent), radial-gradient(1px 1px at 1120px 20px, #FFF, transparent), radial-gradient(2px 2px at 1160px 50px, #FFF, transparent);
+  opacity: 0.6; animation: twinkle 3s ease-in-out infinite alternate;
+}
+@keyframes twinkle { 0% { opacity: 0.4; } 100% { opacity: 0.8; } }
+
+.moon {
+  position: absolute; top: 40px; right: 80px; width: 60px; height: 60px;
+  background: radial-gradient(circle at 35% 35%, #FFFDE7, #F0E68C);
+  border-radius: 50%; box-shadow: 0 0 40px rgba(240, 230, 140, 0.3);
+  animation: moonGlow 4s ease-in-out infinite alternate;
+}
+@keyframes moonGlow { 0% { box-shadow: 0 0 30px rgba(240, 230, 140, 0.2); } 100% { box-shadow: 0 0 60px rgba(240, 230, 140, 0.5); } }
+
+.pyramids { position: absolute; bottom: 0; left: 0; width: 100%; height: 35%; }
+.pyramid { position: absolute; bottom: 0; width: 0; height: 0; border-left: solid transparent; border-right: solid transparent; border-bottom: solid #2C1E0F; }
+.pyramid1 { left: 5%; border-left-width: 80px; border-right-width: 80px; border-bottom-width: 120px; border-bottom-color: #3A2A1A; opacity: 0.7; }
+.pyramid2 { left: 20%; border-left-width: 120px; border-right-width: 120px; border-bottom-width: 180px; border-bottom-color: #2C1E0F; z-index: 2; }
+.pyramid3 { left: 45%; border-left-width: 60px; border-right-width: 60px; border-bottom-width: 90px; border-bottom-color: #4A3A2A; opacity: 0.6; }
+.pyramid4 { left: 60%; border-left-width: 100px; border-right-width: 100px; border-bottom-width: 150px; border-bottom-color: #3A2A1A; opacity: 0.8; }
+.pyramid5 { left: 80%; border-left-width: 70px; border-right-width: 70px; border-bottom-width: 110px; border-bottom-color: #2C1E0F; opacity: 0.5; }
+.sphinx { position: absolute; bottom: 0; left: 35%; width: 0; height: 0; border-left: 50px solid transparent; border-right: 50px solid transparent; border-bottom: 70px solid #3A2A1A; opacity: 0.6; }
+
+.nile-river { position: absolute; bottom: 0; left: 0; width: 100%; height: 8%; background: linear-gradient(90deg, var(--nile-blue), var(--nile-light), var(--nile-blue)); opacity: 0.4; animation: nileFlow 8s linear infinite; }
+@keyframes nileFlow { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+.sand-dunes { position: absolute; bottom: 0; left: 0; width: 100%; height: 15%; background: linear-gradient(180deg, transparent 0%, #4A3A1F 100%); opacity: 0.8; }
+
+/* ---- MAIN CONTAINER ---- */
+#game-container { position: relative; z-index: 10; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+
+/* ---- HEADER ---- */
+#game-header { width: 100%; max-width: 900px; display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: rgba(26, 20, 8, 0.85); border: 2px solid var(--gold); border-radius: 12px; margin-bottom: 15px; backdrop-filter: blur(10px); flex-wrap: wrap; gap: 10px; }
+.header-left { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+.game-title { font-size: 1.3rem; font-weight: bold; color: var(--gold); text-shadow: 0 0 10px rgba(212, 168, 67, 0.5); display: flex; align-items: center; gap: 8px; }
+.title-icon { font-size: 1.6rem; }
+.score-display { display: flex; gap: 15px; flex-wrap: wrap; }
+.score-item { background: rgba(212, 168, 67, 0.15); border: 1px solid var(--gold-dark); border-radius: 8px; padding: 6px 12px; font-size: 0.85rem; color: var(--gold-light); display: flex; align-items: center; gap: 5px; }
+.score-item .label { opacity: 0.7; font-size: 0.75rem; }
+.score-item .value { font-weight: bold; color: var(--gold); }
+.header-right { display: flex; align-items: center; gap: 10px; }
+.sound-btn { background: rgba(212, 168, 67, 0.2); border: 1px solid var(--gold); border-radius: 8px; padding: 8px 12px; color: var(--gold); cursor: pointer; font-size: 1.2rem; transition: all 0.3s ease; }
+.sound-btn:hover { background: rgba(212, 168, 67, 0.4); transform: scale(1.05); }
+.restart-btn { background: rgba(211, 47, 47, 0.3); border: 1px solid var(--error); border-radius: 8px; padding: 8px 12px; color: #FF8A80; cursor: pointer; font-size: 0.85rem; transition: all 0.3s ease; }
+.restart-btn:hover { background: rgba(211, 47, 47, 0.5); transform: scale(1.05); }
+
+/* ---- PROGRESS BAR ---- */
+#progress-section { width: 100%; max-width: 900px; margin-bottom: 15px; }
+.progress-label { text-align: center; color: var(--gold-light); font-size: 0.85rem; margin-bottom: 8px; opacity: 0.8; }
+.progress-track { width: 100%; height: 36px; background: rgba(26, 20, 8, 0.7); border: 2px solid var(--gold-dark); border-radius: 18px; position: relative; overflow: hidden; display: flex; align-items: center; }
+.progress-fill { position: absolute; left: 0; top: 0; height: 100%; background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-light)); border-radius: 16px; transition: width 0.8s ease; width: 0%; }
+.progress-marks { position: relative; z-index: 2; display: flex; justify-content: space-between; width: 100%; padding: 0 15px; }
+.progress-mark { display: flex; flex-direction: column; align-items: center; gap: 2px; transition: all 0.5s ease; }
+.progress-mark .icon { font-size: 1.1rem; opacity: 0.3; transition: all 0.5s ease; }
+.progress-mark .title { font-size: 0.6rem; color: var(--gold-light); opacity: 0.3; transition: all 0.5s ease; white-space: nowrap; }
+.progress-mark.active .icon, .progress-mark.active .title { opacity: 1; text-shadow: 0 0 8px rgba(212, 168, 67, 0.8); }
+.progress-mark.active .icon { transform: scale(1.3); }
+
+/* ---- TIMELINE ---- */
+#timeline-section { width: 100%; max-width: 900px; margin-bottom: 15px; background: rgba(26, 20, 8, 0.7); border: 1px solid var(--gold-dark); border-radius: 10px; padding: 12px 15px; backdrop-filter: blur(5px); }
+.timeline-label { color: var(--gold-light); font-size: 0.8rem; margin-bottom: 8px; text-align: center; opacity: 0.7; }
+.timeline-track { display: flex; justify-content: space-between; align-items: center; position: relative; padding: 0 10px; }
+.timeline-line { position: absolute; top: 50%; left: 20px; right: 20px; height: 3px; background: linear-gradient(90deg, var(--gold-dark), var(--gold)); transform: translateY(-50%); z-index: 1; }
+.timeline-line-bg { position: absolute; top: 50%; left: 20px; right: 20px; height: 3px; background: rgba(139, 115, 85, 0.3); transform: translateY(-50%); z-index: 0; }
+.timeline-node { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; transition: all 0.3s ease; }
+.timeline-node .dot { width: 14px; height: 14px; border-radius: 50%; background: var(--sand-dark); border: 2px solid var(--gold-dark); transition: all 0.4s ease; }
+.timeline-node .label { font-size: 0.6rem; color: var(--sand); max-width: 60px; text-align: center; transition: all 0.4s ease; }
+.timeline-node.completed .dot { background: var(--gold); border-color: var(--gold-light); box-shadow: 0 0 10px rgba(212, 168, 67, 0.6); }
+.timeline-node.completed .label { color: var(--gold-light); }
+.timeline-node.current .dot { background: var(--gold-light); border-color: #FFF; box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); animation: pulseDot 1.5s ease-in-out infinite; }
+.timeline-node.current .label { color: var(--gold-light); font-weight: bold; }
+@keyframes pulseDot { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3); } }
+
+/* ---- KINGDOM BUILDER ---- */
+#kingdom-section { width: 100%; max-width: 900px; margin-bottom: 15px; background: rgba(26, 20, 8, 0.7); border: 1px solid var(--gold-dark); border-radius: 10px; padding: 15px; backdrop-filter: blur(5px); }
+.kingdom-label { color: var(--gold-light); font-size: 0.85rem; text-align: center; margin-bottom: 10px; opacity: 0.8; }
+.kingdom-display { display: flex; justify-content: center; align-items: flex-end; gap: 8px; min-height: 80px; padding: 10px; flex-wrap: wrap; }
+.kingdom-item { font-size: 2.5rem; opacity: 0.2; transition: all 0.6s ease; filter: grayscale(1); }
+.kingdom-item.unlocked { opacity: 1; filter: grayscale(0); animation: unlockItem 0.8s ease forwards; }
+@keyframes unlockItem { 0% { transform: scale(0) rotate(-20deg); opacity: 0; } 50% { transform: scale(1.3) rotate(5deg); } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
+.kingdom-item-name { font-size: 0.6rem; color: var(--gold-light); text-align: center; margin-top: 2px; opacity: 0.5; }
+.kingdom-item.unlocked + .kingdom-item-name { opacity: 1; }
+
+/* ---- MAIN GAME AREA ---- */
+#game-area { width: 100%; max-width: 800px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+/* ---- SCREENS ---- */
+.screen { display: none; width: 100%; animation: fadeIn 0.5s ease; }
+.screen.active { display: flex; flex-direction: column; align-items: center; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ---- START SCREEN ---- */
+.start-screen { text-align: center; padding: 40px 20px; }
+.start-logo { font-size: 5rem; margin-bottom: 10px; animation: floatLogo 3s ease-in-out infinite; }
+@keyframes floatLogo { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+.start-title { font-size: 2.5rem; color: var(--gold); text-shadow: 0 0 20px rgba(212, 168, 67, 0.6); margin-bottom: 10px; font-weight: bold; }
+.start-subtitle { font-size: 1.1rem; color: var(--sand-light); margin-bottom: 30px; opacity: 0.8; }
+.start-story { background: rgba(245, 230, 200, 0.1); border: 1px solid var(--gold-dark); border-radius: 12px; padding: 20px; max-width: 600px; margin-bottom: 30px; text-align: left; color: var(--papyrus); line-height: 1.7; font-size: 1rem; }
+.start-story p { margin-bottom: 10px; }
+.start-btn { background: linear-gradient(135deg, var(--gold-dark), var(--gold)); border: none; border-radius: 12px; padding: 16px 50px; font-size: 1.3rem; font-weight: bold; color: var(--dark-bg); cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 20px rgba(212, 168, 67, 0.4); position: relative; overflow: hidden; }
+.start-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(212, 168, 67, 0.6); }
+.start-btn::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent); transform: rotate(45deg); transition: all 0.5s ease; }
+.start-btn:hover::after { left: 100%; }
+
+/* ---- PHASE INTRO SCREEN ---- */
+.phase-intro { text-align: center; padding: 30px 20px; max-width: 700px; }
+.phase-number { font-size: 0.9rem; color: var(--gold); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 10px; }
+.phase-title { font-size: 2rem; color: var(--gold-light); margin-bottom: 15px; text-shadow: 0 0 15px rgba(212, 168, 67, 0.4); }
+.phase-icon { font-size: 4rem; margin: 20px 0; animation: phaseIconIn 0.8s ease forwards; }
+@keyframes phaseIconIn { 0% { transform: scale(0) rotate(-180deg); opacity: 0; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
+.phase-description { color: var(--papyrus); font-size: 1rem; line-height: 1.7; margin-bottom: 25px; padding: 15px; background: rgba(245, 230, 200, 0.08); border-radius: 10px; border-left: 3px solid var(--gold); }
+.phase-btn { background: linear-gradient(135deg, var(--gold-dark), var(--gold)); border: none; border-radius: 10px; padding: 14px 40px; font-size: 1.1rem; font-weight: bold; color: var(--dark-bg); cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(212, 168, 67, 0.3); }
+.phase-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(212, 168, 67, 0.5); }
+
+/* ---- QUESTION SCREEN ---- */
+.question-screen { width: 100%; max-width: 700px; padding: 20px; }
+.question-card { background: linear-gradient(145deg, var(--papyrus), var(--papyrus-dark)); border: 3px solid var(--gold); border-radius: 16px; padding: 30px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.2); position: relative; overflow: hidden; }
+.question-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-light), var(--gold), var(--gold-dark)); }
+.question-number { text-align: center; color: var(--sand-dark); font-size: 0.85rem; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; }
+.question-text { font-size: 1.25rem; color: var(--text-dark); margin-bottom: 25px; line-height: 1.6; text-align: center; font-weight: 600; }
+.answers-container { display: flex; flex-direction: column; gap: 12px; }
+.answer-btn { background: rgba(196, 168, 130, 0.2); border: 2px solid var(--sand); border-radius: 10px; padding: 14px 20px; font-size: 1rem; color: var(--text-dark); cursor: pointer; transition: all 0.3s ease; text-align: left; display: flex; align-items: center; gap: 12px; }
+.answer-btn:hover:not(.disabled) { background: rgba(212, 168, 67, 0.2); border-color: var(--gold); transform: translateX(5px); }
+.answer-btn .letter { width: 32px; height: 32px; border-radius: 50%; background: var(--sand); color: var(--papyrus); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; flex-shrink: 0; transition: all 0.3s ease; }
+.answer-btn:hover:not(.disabled) .letter { background: var(--gold); }
+.answer-btn.correct { background: rgba(76, 175, 80, 0.2); border-color: var(--success); animation: correctPulse 0.5s ease; }
+.answer-btn.correct .letter { background: var(--success); }
+.answer-btn.wrong { background: rgba(211, 47, 47, 0.2); border-color: var(--error); animation: wrongShake 0.5s ease; }
+.answer-btn.wrong .letter { background: var(--error); }
+.answer-btn.disabled { cursor: default; opacity: 0.6; }
+@keyframes correctPulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+@keyframes wrongShake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-10px); } 40% { transform: translateX(10px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(5px); } }
+
+.feedback-area { margin-top: 20px; padding: 15px; border-radius: 10px; display: none; animation: fadeIn 0.4s ease; }
+.feedback-area.show { display: block; }
+.feedback-area.correct { background: rgba(76, 175, 80, 0.15); border: 1px solid var(--success); }
+.feedback-area.wrong { background: rgba(211, 47, 47, 0.15); border: 1px solid var(--error); }
+.feedback-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+.feedback-area.correct .feedback-title { color: var(--success); }
+.feedback-area.wrong .feedback-title { color: var(--error); }
+.feedback-text { color: var(--text-dark); line-height: 1.6; font-size: 0.95rem; }
+.next-btn { margin-top: 15px; background: linear-gradient(135deg, var(--gold-dark), var(--gold)); border: none; border-radius: 10px; padding: 12px 35px; font-size: 1rem; font-weight: bold; color: var(--dark-bg); cursor: pointer; transition: all 0.3s ease; display: block; margin-left: auto; margin-right: auto; }
+.next-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(212, 168, 67, 0.4); }
+
+/* ---- CONSEQUENCE ANIMATION ---- */
+.consequence-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; pointer-events: none; display: none; justify-content: center; align-items: center; }
+.consequence-overlay.show { display: flex; animation: fadeIn 0.3s ease; }
+.sandstorm { background: rgba(196, 168, 130, 0.3); backdrop-filter: blur(2px); }
+.sandstorm-particles { position: absolute; width: 100%; height: 100%; overflow: hidden; }
+.sand-particle { position: absolute; width: 4px; height: 4px; background: var(--sand); border-radius: 50%; opacity: 0.6; animation: sandFly 1s linear forwards; }
+@keyframes sandFly { 0% { transform: translateX(-10px) translateY(0); opacity: 0.6; } 100% { transform: translateX(100vw) translateY(-50px); opacity: 0; } }
+.nile-drought { background: rgba(211, 47, 47, 0.15); }
+.nile-drought::before { content: '💧'; font-size: 8rem; opacity: 0.3; animation: droughtDrop 1.5s ease forwards; }
+@keyframes droughtDrop { 0% { transform: translateY(-100px) scale(1); opacity: 0.5; } 100% { transform: translateY(100px) scale(0.3); opacity: 0; } }
+.invasion { background: rgba(139, 0, 0, 0.2); }
+.invasion::before { content: '⚔️'; font-size: 6rem; animation: invasionShake 0.8s ease forwards; }
+@keyframes invasionShake { 0%, 100% { transform: translateX(0) rotate(0); } 25% { transform: translateX(-20px) rotate(-10deg); } 50% { transform: translateX(20px) rotate(10deg); } 75% { transform: translateX(-10px) rotate(-5deg); } }
+.crop-loss { background: rgba(139, 69, 19, 0.2); }
+.crop-loss::before { content: '🌾'; font-size: 6rem; animation: cropWilt 1.2s ease forwards; }
+@keyframes cropWilt { 0% { transform: scale(1) rotate(0); opacity: 0.8; } 50% { transform: scale(0.8) rotate(15deg); opacity: 0.5; } 100% { transform: scale(0.5) rotate(30deg); opacity: 0; } }
+.temple-damage { background: rgba(100, 50, 0, 0.2); }
+.temple-damage::before { content: '🏛️'; font-size: 6rem; animation: templeCrack 1s ease forwards; }
+@keyframes templeCrack { 0% { transform: scale(1); opacity: 0.8; } 30% { transform: scale(1.05) rotate(-2deg); } 60% { transform: scale(0.95) rotate(2deg); } 100% { transform: scale(0.8) rotate(0); opacity: 0.3; } }
+.consequence-text { position: absolute; bottom: 30%; font-size: 1.5rem; color: var(--error); font-weight: bold; text-shadow: 0 0 10px rgba(0,0,0,0.5); animation: consequenceTextIn 0.5s ease forwards; }
+@keyframes consequenceTextIn { 0% { transform: translateY(20px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+
+/* ---- REWARD ANIMATION ---- */
+.reward-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; pointer-events: none; display: none; justify-content: center; align-items: center; }
+.reward-overlay.show { display: flex; }
+.reward-item { font-size: 6rem; animation: rewardPop 1s ease forwards; }
+@keyframes rewardPop { 0% { transform: scale(0) rotate(-30deg); opacity: 0; } 50% { transform: scale(1.5) rotate(10deg); opacity: 1; } 100% { transform: scale(1) rotate(0); opacity: 0; } }
+.reward-text { position: absolute; font-size: 1.3rem; color: var(--gold); font-weight: bold; text-shadow: 0 0 10px rgba(0,0,0,0.5); animation: rewardTextIn 0.5s ease 0.3s forwards; opacity: 0; }
+@keyframes rewardTextIn { 0% { transform: translateY(30px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+
+/* ---- END SCREEN ---- */
+.end-screen { text-align: center; padding: 30px 20px; max-width: 700px; }
+.end-title { font-size: 2.2rem; color: var(--gold); margin-bottom: 15px; text-shadow: 0 0 20px rgba(212, 168, 67, 0.5); }
+.end-result { font-size: 1.5rem; color: var(--gold-light); margin-bottom: 20px; padding: 15px; background: rgba(212, 168, 67, 0.1); border: 2px solid var(--gold); border-radius: 12px; }
+.end-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 25px; }
+.stat-card { background: rgba(245, 230, 200, 0.1); border: 1px solid var(--gold-dark); border-radius: 10px; padding: 15px; }
+.stat-card .stat-label { font-size: 0.8rem; color: var(--sand-light); margin-bottom: 5px; }
+.stat-card .stat-value { font-size: 1.8rem; color: var(--gold); font-weight: bold; }
+.end-kingdom { margin: 20px 0; padding: 20px; background: rgba(245, 230, 200, 0.08); border-radius: 12px; border: 1px solid var(--gold-dark); }
+.end-kingdom-title { color: var(--gold-light); font-size: 1rem; margin-bottom: 15px; }
+.end-kingdom-items { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+.end-kingdom-item { font-size: 3rem; opacity: 0.3; transition: all 0.5s ease; }
+.end-kingdom-item.unlocked { opacity: 1; animation: kingdomItemIn 0.6s ease forwards; }
+@keyframes kingdomItemIn { 0% { transform: scale(0); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+.end-kingdom-item-name { font-size: 0.7rem; color: var(--sand-light); margin-top: 5px; }
+.end-kingdom-item-wrapper { display: flex; flex-direction: column; align-items: center; }
+.end-message { color: var(--papyrus); font-size: 1.1rem; line-height: 1.7; margin: 20px 0; padding: 15px; background: rgba(245, 230, 200, 0.08); border-left: 3px solid var(--gold); border-radius: 0 10px 10px 0; text-align: left; }
+.end-buttons { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+.end-btn { background: linear-gradient(135deg, var(--gold-dark), var(--gold)); border: none; border-radius: 10px; padding: 14px 35px; font-size: 1rem; font-weight: bold; color: var(--dark-bg); cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(212, 168, 67, 0.3); }
+.end-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(212, 168, 67, 0.5); }
+.end-btn.secondary { background: transparent; border: 2px solid var(--gold); color: var(--gold); }
+.end-btn.secondary:hover { background: rgba(212, 168, 67, 0.2); }
+
+/* ---- RESPONSIVE ---- */
+@media (max-width: 600px) {
+  .start-title { font-size: 1.8rem; } .start-logo { font-size: 3.5rem; }
+  .question-text { font-size: 1.05rem; } .answer-btn { font-size: 0.9rem; padding: 12px 15px; }
+  .question-card { padding: 20px 15px; } .end-title { font-size: 1.6rem; }
+  .end-result { font-size: 1.2rem; } .stat-card .stat-value { font-size: 1.4rem; }
+  .game-title { font-size: 1rem; } .progress-mark .title { font-size: 0.5rem; }
+  .timeline-node .label { font-size: 0.5rem; max-width: 45px; }
+  .kingdom-item { font-size: 1.8rem; }
+}
+@media (max-width: 400px) {
+  .start-title { font-size: 1.4rem; } .question-text { font-size: 0.95rem; }
+  .answer-btn { font-size: 0.85rem; } .progress-mark .title { display: none; }
+  .timeline-node .label { display: none; }
+}
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--dark-bg); }
+::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+</style>
+</head>
+<body>
+
+<div id="bg-scene">
+  <div class="stars"></div>
+  <div class="moon"></div>
+  <div class="pyramids">
+    <div class="pyramid pyramid1"></div>
+    <div class="pyramid pyramid2"></div>
+    <div class="pyramid pyramid3"></div>
+    <div class="pyramid pyramid4"></div>
+    <div class="pyramid pyramid5"></div>
+    <div class="sphinx"></div>
+  </div>
+  <div class="nile-river"></div>
+  <div class="sand-dunes"></div>
+</div>
+
+<div id="consequence-overlay" class="consequence-overlay">
+  <div id="consequence-content"></div>
+  <div id="consequence-text" class="consequence-text"></div>
+</div>
+
+<div id="reward-overlay" class="reward-overlay">
+  <div id="reward-item" class="reward-item"></div>
+  <div id="reward-text" class="reward-text"></div>
+</div>
+
+<div id="game-container">
+  <div id="game-header">
+    <div class="header-left">
+      <div class="game-title"><span class="title-icon">👑</span><span>Desafio do Faraó</span></div>
+      <div class="score-display">
+        <div class="score-item"><span class="label">✓</span><span class="value" id="score-correct">0</span></div>
+        <div class="score-item"><span class="label">✗</span><span class="value" id="score-wrong">0</span></div>
+        <div class="score-item"><span class="label">%</span><span class="value" id="score-percent">0</span></div>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="sound-btn" id="sound-btn" onclick="toggleSound()" title="Som ON/OFF">🔊</button>
+      <button class="restart-btn" onclick="restartGame()" title="Reiniciar">↻</button>
+    </div>
+  </div>
+
+  <div id="progress-section">
+    <div class="progress-label">Sua jornada: <span id="current-rank">Escriba</span></div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+      <div class="progress-marks">
+        <div class="progress-mark active" data-rank="0"><span class="icon">📜</span><span class="title">Escriba</span></div>
+        <div class="progress-mark" data-rank="1"><span class="icon">🏛️</span><span class="title">Funcionário Real</span></div>
+        <div class="progress-mark" data-rank="2"><span class="icon">🔮</span><span class="title">Sacerdote</span></div>
+        <div class="progress-mark" data-rank="3"><span class="icon">📋</span><span class="title">Conselheiro</span></div>
+        <div class="progress-mark" data-rank="4"><span class="icon">⚖️</span><span class="title">Vizir</span></div>
+        <div class="progress-mark" data-rank="5"><span class="icon">👑</span><span class="title">Faraó</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="timeline-section">
+    <div class="timeline-label">Linha do Tempo do Egito Antigo</div>
+    <div class="timeline-track">
+      <div class="timeline-line-bg"></div>
+      <div class="timeline-line" id="timeline-line"></div>
+      <div class="timeline-node current" data-phase="0"><div class="dot"></div><div class="label">Geografia</div></div>
+      <div class="timeline-node" data-phase="1"><div class="dot"></div><div class="label">Unificação</div></div>
+      <div class="timeline-node" data-phase="2"><div class="dot"></div><div class="label">Sociedade</div></div>
+      <div class="timeline-node" data-phase="3"><div class="dot"></div><div class="label">Religião</div></div>
+      <div class="timeline-node" data-phase="4"><div class="dot"></div><div class="label">Arquitetura</div></div>
+      <div class="timeline-node" data-phase="5"><div class="dot"></div><div class="label">Ciência</div></div>
+      <div class="timeline-node" data-phase="6"><div class="dot"></div><div class="label">Revisão</div></div>
+    </div>
+  </div>
+
+  <div id="kingdom-section">
+    <div class="kingdom-label">🏗️ Seu Reino em Construção</div>
+    <div class="kingdom-display" id="kingdom-display">
+      <div class="kingdom-item-wrapper"><div class="kingdom-item" data-item="0">🧱</div><div class="kingdom-item-name">Bloco da Pirâmide</div></div>
+      <div class="kingdom-item-wrapper"><div class="kingdom-item" data-item="1">🏛️</div><div class="kingdom-item-name">Coluna do Templo</div></div>
+      <div class="kingdom-item-wrapper"><div class="kingdom-item" data-item="2">🗿</div><div class="kingdom-item-name">Estátua</div></div>
+      <div class="kingdom-item-wrapper"><div class="kingdom-item" data-item="3">👑</div><div class="kingdom-item-name">Coroa do Faraó</div></div>
+      <div class="kingdom-item-wrapper"><div class="kingdom-item" data-item="4">⚜️</div><div class="kingdom-item-name">Cetro</div></div>
+      <div class="kingdom-item-wrapper"><div class="kingdom-item" data-item="5">🏰</div><div class="kingdom-item-name">Palácio</div></div>
+    </div>
+  </div>
+
+  <div id="game-area">
+    <div id="screen-start" class="screen start-screen active">
+      <div class="start-logo">🏺</div>
+      <div class="start-title">Desafio do Faraó</div>
+      <div class="start-subtitle">Uma Aventura pelo Egito Antigo</div>
+      <div class="start-story">
+        <p>🌅 <strong>Bem-vindo, jovem escriba!</strong></p>
+        <p>Você vive no Antigo Egito, a terra das pirâmides e do Rio Nilo. Sonha em um dia governar como Faraó do Alto e Baixo Egito.</p>
+        <p>Mas o caminho até o trono é longo e cheio de desafios. Para provar que é digno, você deve demonstrar conhecimento sobre:</p>
+        <p>🌍 A geografia sagrada | 👑 A unificação do reino | 🏛️ A sociedade egípcia | ✨ Os mistérios da religião | 🔺 As maravilhas da arquitetura | 🔬 Os segredos da ciência</p>
+        <p><strong>Cada resposta correta fortalece seu reino. Cada erro traz consequências...</strong></p>
+        <p>⚡ <em>Está pronto para iniciar sua jornada?</em></p>
+      </div>
+      <button class="start-btn" onclick="startGame()">🚀 Iniciar Jornada</button>
+    </div>
+
+    <div id="screen-phase" class="screen phase-intro">
+      <div class="phase-number" id="phase-number">FASE 1</div>
+      <div class="phase-icon" id="phase-icon">🌍</div>
+      <div class="phase-title" id="phase-title">A Terra do Nilo</div>
+      <div class="phase-description" id="phase-description"></div>
+      <button class="phase-btn" onclick="startPhaseQuestions()">▶ Começar Fase</button>
+    </div>
+
+    <div id="screen-question" class="screen question-screen">
+      <div class="question-card">
+        <div class="question-number" id="question-number">Pergunta 1 de 7</div>
+        <div class="question-text" id="question-text"></div>
+        <div class="answers-container" id="answers-container"></div>
+        <div class="feedback-area" id="feedback-area">
+          <div class="feedback-title" id="feedback-title"></div>
+          <div class="feedback-text" id="feedback-text"></div>
+          <button class="next-btn" id="next-btn" onclick="nextQuestion()">Próxima →</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="screen-end" class="screen end-screen">
+      <div class="end-title">🏆 Jornada Concluída!</div>
+      <div class="end-result" id="end-result"></div>
+      <div class="end-stats">
+        <div class="stat-card"><div class="stat-label">Acertos</div><div class="stat-value" id="end-correct">0</div></div>
+        <div class="stat-card"><div class="stat-label">Erros</div><div class="stat-value" id="end-wrong">0</div></div>
+        <div class="stat-card"><div class="stat-label">Porcentagem</div><div class="stat-value" id="end-percent">0%</div></div>
+        <div class="stat-card"><div class="stat-label">Fases Completadas</div><div class="stat-value" id="end-phases">0/7</div></div>
+      </div>
+      <div class="end-kingdom">
+        <div class="end-kingdom-title">🏗️ Seu Reino Final</div>
+        <div class="end-kingdom-items" id="end-kingdom-items"></div>
+      </div>
+      <div class="end-message" id="end-message"></div>
+      <div class="end-buttons">
+        <button class="end-btn" onclick="restartGame()">🔄 Jogar Novamente</button>
+        <button class="end-btn secondary" onclick="showStartScreen()">🏠 Menu Principal</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+// ============================================
+// DESAFIO DO FARAÓ - EGITO ANTIGO
+// Jogo Educativo para 6º Ano do Ensino Fundamental
+// ============================================
+
+// ---- GAME STATE ----
+let gameState = {
+  currentPhase: 0,
+  currentQuestion: 0,
+  correctCount: 0,
+  wrongCount: 0,
+  kingdomItems: [false, false, false, false, false, false],
+  soundEnabled: true,
+  answeredCurrent: false,
+  phaseIntroShown: false
+};
+
+const ranks = ["Escriba", "Funcionário Real", "Sacerdote", "Conselheiro", "Vizir", "Faraó"];
+
+const kingdomItemsData = [
+  { icon: "🧱", name: "Bloco da Pirâmide" },
+  { icon: "🏛️", name: "Coluna do Templo" },
+  { icon: "🗿", name: "Estátua" },
+  { icon: "👑", name: "Coroa do Faraó" },
+  { icon: "⚜️", name: "Cetro" },
+  { icon: "🏰", name: "Palácio" }
+];
+
+const consequences = [
+  { type: "sandstorm", text: "🌪️ Tempestade de areia! Seu reino fica coberto de poeira.", className: "sandstorm" },
+  { type: "drought", text: "💧 Cheia insuficiente do Nilo! As plantações sofrem.", className: "nile-drought" },
+  { type: "invasion", text: "⚔️ Ataque inimigo! Seus muros são danificados.", className: "invasion" },
+  { type: "crop", text: "🌾 Perda de plantações! O povo passa fome.", className: "crop-loss" },
+  { type: "temple", text: "🏛️ Templo danificado! Os deuses estão descontentes.", className: "temple-damage" }
+];
+
+// ---- PHASES DATA (42 questions total) ----
+const phases = [
+  {
+    title: "A Terra do Nilo",
+    icon: "🌍",
+    description: "Explore a geografia do Egito Antigo! Descubra os segredos do Rio Nilo, dos desertos que o cercam e da agricultura que sustentou uma das maiores civilizações da história.",
+    questions: [
+      { question: "Qual rio era considerado sagrado e essencial para a vida no Egito Antigo?", answers: ["Rio Tigre", "Rio Nilo", "Rio Eufrates", "Rio Jordão"], correct: 1, explanation: "O Rio Nilo era o coração do Egito Antigo. Suas cheias anuais depositavam lama fértil (secremento) nas margens, permitindo a agricultura no meio do deserto." },
+      { question: "O Egito Antigo ficava localizado em qual continente?", answers: ["Ásia", "Europa", "África", "América"], correct: 2, explanation: "O Egito Antigo ficava no nordeste da África, às margens do Rio Nilo. Sua localização estratégica o tornava um ponto de comércio entre África, Ásia e Europa." },
+      { question: "Qual era o nome do deserto que protegia o Egito do lado oeste?", answers: ["Deserto do Saara", "Deserto de Gobi", "Deserto da Arábia", "Deserto de Kalahari"], correct: 0, explanation: "O Deserto do Saara protegia o Egito pelo oeste. Esses desertos funcionavam como barreiras naturais contra invasões, tornando o Egito mais seguro." },
+      { question: "Como os egípcios chamavam a terra fértil próxima ao Nilo?", answers: ["Kemet (terra preta)", "Desher (terra vermelha)", "Ta-Mer (terra do mar)", "Nub (terra dourada)"], correct: 0, explanation: "Os egípcios chamavam a terra fértil das margens do Nilo de 'Kemet', que significa 'terra preta', devido à cor do secremento (lama) deixado pelas cheias." },
+      { question: "Qual era o principal cultivo agrícola do Egito Antigo?", answers: ["Milho", "Trigo e cevada", "Arroz", "Cana-de-açúcar"], correct: 1, explanation: "Trigo e cevada eram os principais cultivos. O trigo era usado para fazer pão (alimento básico) e a cevada para produzir cerveja, bebida comum entre os egípcios." },
+      { question: "Por que as cheias do Nilo eram importantes para os egípcios?", answers: ["Porque destruíam inimigos", "Porque traziam lama fértil para plantar", "Porque permitiam pescar mais peixes", "Porque limpavam as cidades"], correct: 1, explanation: "As cheias anuais do Nilo depositavam lama rica em nutrientes (secremento) nas margens, tornando o solo extremamente fértil para a agricultura." },
+      { question: "O que os egípcios construíam para controlar a água do Nilo?", answers: ["Pontes", "Canais e diques", "Túneis", "Muros de pedra"], correct: 1, explanation: "Os egípcios construíam canais de irrigação e diques (barragens simples) para controlar a água do Nilo, garantindo que as plantações recebessem água mesmo fora da época de cheia." }
+    ]
+  },
+  {
+    title: "A Unificação do Reino",
+    icon: "👑",
+    description: "Descubra como o Alto e Baixo Egito se unificaram! Conheça os primeiros faraós e a formação de uma das civilizações mais poderosas da antiguidade.",
+    questions: [
+      { question: "Quem foi o faraó que unificou o Alto e Baixo Egito?", answers: ["Ramsés II", "Tutancâmon", "Menes (Narmer)", "Cleópatra"], correct: 2, explanation: "Menes (também conhecido como Narmer) foi o faraó que, por volta de 3100 a.C., unificou o Alto Egito (sul) e o Baixo Egito (norte), criando o primeiro Estado egípcio unificado." },
+      { question: "Qual era o nome da coroa usada no Baixo Egito?", answers: ["Coroa Branca (Hedjet)", "Coroa Vermelha (Deshret)", "Coroa Dupla (Pschent)", "Coroa Azul (Khepresh)"], correct: 1, explanation: "A Coroa Vermelha (Deshret) representava o Baixo Egito (norte, próximo ao delta do Nilo). A Coroa Branca (Hedjet) representava o Alto Egito (sul)." },
+      { question: "O que significa a 'Coroa Dupla' (Pschent)?", answers: ["Que o faraó governava apenas o Alto Egito", "Que o faraó governava apenas o Baixo Egito", "Que o faraó governava os dois reinos unidos", "Que o faraó era um deus"], correct: 2, explanation: "A Coroa Dupla (Pschent) combinava a Coroa Branca do Alto Egito com a Coroa Vermelha do Baixo Egito, simbolizando a união dos dois reinos sob um único governante." },
+      { question: "Qual era a capital do Egito unificado?", answers: ["Alexandria", "Tebas", "Memphis", "Gizé"], correct: 2, explanation: "Memphis (chamada de Mennefer pelos egípcios) foi fundada por Menes como capital do Egito unificado, localizada estrategicamente entre o Alto e Baixo Egito." },
+      { question: "O que é uma 'dinastia' no contexto egípcio?", answers: ["Um tipo de templo", "Uma sequência de faraós da mesma família", "Um tipo de escrita", "Uma medida de terra"], correct: 1, explanation: "Uma dinastia é uma sequência de faraós que pertenciam à mesma família. Os historiadores dividem a história egípcia em 31 dinastias." },
+      { question: "Qual era o título mais importante do governante egípcio?", answers: ["Rei", "Imperador", "Faraó", "Sultão"], correct: 2, explanation: "'Faraó' significa 'grande casa' e era o título do governante supremo do Egito. Os egípcios acreditavam que o faraó era um deus vivo, filho de Rá (deus do sol)." },
+      { question: "Qual era o período mais antigo da história egípcia?", answers: ["Período Ptolemaico", "Período Novo", "Período Arcaico (ou Pré-Dinástico)", "Período Intermediário"], correct: 2, explanation: "O Período Arcaico (ou Pré-Dinástico) é o período mais antigo, antes da unificação. Depois veio o Reino Antigo, Médio, Novo e os períodos intermediários." }
+    ]
+  },
+  {
+    title: "A Sociedade Egípcia",
+    icon: "🏛️",
+    description: "Conheça a hierarquia social do Egito Antigo! Do poderoso Faraó aos escribas, sacerdotes, camponeses e escravos, cada um tinha um papel na sociedade.",
+    questions: [
+      { question: "Quem ocupava o topo da pirâmide social egípcia?", answers: ["Os sacerdotes", "Os escribas", "O Faraó", "Os generais"], correct: 2, explanation: "O Faraó ocupava o topo absoluto da hierarquia social. Era considerado um deus vivo, filho de Rá, e tinha poder absoluto sobre todos os aspectos da vida no Egito." },
+      { question: "Qual era a função dos escribas no Egito Antigo?", answers: ["Guerrear contra inimigos", "Escrever e registrar informações", "Cuidar dos templos", "Trabalhar nos campos"], correct: 1, explanation: "Os escribas eram responsáveis por escrever, ler e registrar informações. Eles registravam impostos, contratos, decretos e textos religiosos. Era uma profissão muito respeitada." },
+      { question: "Qual era o papel dos sacerdotes na sociedade egípcia?", answers: ["Comandar o exército", "Cuidar dos templos e rituais religiosos", "Construir pirâmides", "Ensinar as crianças"], correct: 1, explanation: "Os sacerdotes cuidavam dos templos, realizavam rituais religiosos, mantinham os calendários e interpretavam os desejos dos deuses. Tinham grande poder e influência." },
+      { question: "Quem eram os 'camponeses' no Egito Antigo?", answers: ["Nobres que governavam cidades", "Trabalhadores rurais que cultivavam a terra", "Comerciantes que viajavam", "Soldados que protegiam o reino"], correct: 1, explanation: "Os camponeses eram trabalhadores rurais que cultivavam a terra, cuidavam dos animais e pagavam impostos em forma de produtos agrícolas. Formavam a maior parte da população." },
+      { question: "Como as pessoas se tornavam escribas?", answers: ["Eram escolhidas por nascimento", "Estudavam por muitos anos em escolas especiais", "Eram nomeadas pelo faraó", "Compravam o cargo"], correct: 1, explanation: "Para se tornar escriba, era preciso estudar por muitos anos em escolas especiais, aprendendo hieróglifos, matemática e administração. Poucos tinham acesso a essa educação." },
+      { question: "Qual era a situação dos escravos no Egito Antigo?", answers: ["Eram tratados como animais", "Trabalhavam duro, mas podiam ter alguns direitos", "Viviam em palácios", "Eram considerados deuses"], correct: 1, explanation: "Os escravos trabalhavam duro, mas podiam ter alguns direitos, como possuir bens e até serem libertados. Muitos escravos eram prisioneiros de guerra ou devedores." },
+      { question: "Quem eram os 'artesãos' na sociedade egípcia?", answers: ["Pessoas que trabalhavam com artes", "Soldados especializados", "Médicos do faraó", "Agricultores ricos"], correct: 0, explanation: "Os artesãos eram pessoas especializadas em trabalhos manuais como escultura, pintura, cerâmica, tecelagem e joalheria. Criavam objetos belos e úteis para a sociedade." }
+    ]
+  },
+  {
+    title: "Os Mistérios da Religião",
+    icon: "✨",
+    description: "Mergulhe nos mistérios da religião egípcia! Descubra o politeísmo, a crença na vida após a morte, o processo de mumificação e o julgamento de Osíris.",
+    questions: [
+      { question: "O que é o politeísmo praticado pelos egípcios?", answers: ["Crença em um único deus", "Crença em vários deuses", "Crença em espíritos da natureza", "Não acreditar em deuses"], correct: 1, explanation: "O politeísmo é a crença em vários deuses. Os egípcios adoravam deuses como Rá (sol), Osíris (morte), Ísis (maternidade), Anúbis (mumificação) e muitos outros." },
+      { question: "Qual deus egípcio era associado ao sol?", answers: ["Osíris", "Anúbis", "Rá (ou Amon-Rá)", "Toth"], correct: 2, explanation: "Rá (ou Amon-Rá) era o deus do sol, um dos mais importantes do panteão egípcio. Os egípcios acreditavam que o faraó era filho de Rá." },
+      { question: "O que os egípcios acreditavam sobre a vida após a morte?", answers: ["Que não existia nada após a morte", "Que a alma (ka) continuava viva no Além", "Que reencarnavam como animais", "Que viravam estrelas"], correct: 1, explanation: "Os egípcios acreditavam que a alma (chamada 'ka') continuava viva após a morte, no Além. Por isso, cuidavam muito dos corpos dos mortos através da mumificação." },
+      { question: "Qual era o objetivo da mumificação?", answers: ["Preservar o corpo para a vida após a morte", "Prevenir doenças", "Honrar os deuses", "Punir os criminosos"], correct: 0, explanation: "A mumificação tinha como objetivo preservar o corpo para a vida após a morte. Os egípcios acreditavam que o 'ka' (alma) precisava do corpo para continuar existindo." },
+      { question: "Quem era o deus associado à mumificação?", answers: ["Rá", "Ísis", "Anúbis", "Hórus"], correct: 2, explanation: "Anúbis era o deus associado à mumificação e ao mundo dos mortos. Era representado com cabeça de chacal (cão selvagem) e guiava as almas no Além." },
+      { question: "O que acontecia no 'Julgamento de Osíris'?", answers: ["O faraó escolhia um novo governante", "O coração do morto era pesado contra uma pena", "Os deuses decidiam quem seria mumificado", "Os sacerdotes escolhiam os novos escribas"], correct: 1, explanation: "No Julgamento de Osíris, o coração do morto era colocado em uma balança e pesado contra a pena da verdade (deusa Maat). Se fosse mais leve, a alma ia para o paraíso; se mais pesado, era devorada por Ammit." },
+      { question: "Quem era Osíris na mitologia egípcia?", answers: ["Deus do sol", "Deus da morte e ressurreição", "Deus da guerra", "Deus do amor"], correct: 1, explanation: "Osíris era o deus da morte, ressurreição e fertilidade. Foi morto por seu irmão Seth, mas ressuscitado por Ísis, tornando-se o rei do mundo dos mortos." }
+    ]
+  },
+  {
+    title: "As Maravilhas da Arquitetura",
+    icon: "🔺",
+    description: "Admire as construções incríveis do Egito Antigo! Das pirâmides à Esfinge, dos hieróglifos ao papiro, descubra como os egípcios deixaram seu legado para a humanidade.",
+    questions: [
+      { question: "Para que serviam as pirâmides do Egito Antigo?", answers: ["Como palácios para os faraós vivos", "Como tumbas para os faraós mortos", "Como templos para os deuses", "Como armazéns de grãos"], correct: 1, explanation: "As pirâmides eram tumbas monumentais construídas para os faraós. Acreditava-se que a pirâmide ajudava o faraó a ascender aos céus e se unir com o deus Rá." },
+      { question: "Qual é a maior pirâmide do Egito?", answers: ["Pirâmide de Quéfren", "Pirâmide de Miquerinos", "Grande Pirâmide de Quéops", "Pirâmide de Djoser"], correct: 2, explanation: "A Grande Pirâmide de Quéops (ou Khufu) em Gizé é a maior, com cerca de 146 metros de altura original. É uma das Sete Maravilhas do Mundo Antigo." },
+      { question: "O que é a Esfinge de Gizé?", answers: ["Um templo dedicado ao deus Rá", "Uma estátua com corpo de leão e cabeça humana", "Um tipo de papiro sagrado", "Um instrumento musical"], correct: 1, explanation: "A Esfinge é uma estátua colossal com corpo de leão e cabeça de faraó (provavelmente Quéfren). Simboliza a união da força física (leão) com a sabedoria humana." },
+      { question: "O que são hieróglifos?", answers: ["Instrumentos de medição", "Sistema de escrita egípcia com figuras", "Tipo de música sagrada", "Roupas dos sacerdotes"], correct: 1, explanation: "Hieróglifos eram o sistema de escrita dos egípcios, composto por figuras e símbolos. Cada figura podia representar uma palavra, um som ou uma ideia." },
+      { question: "Em que material os egípcios escreviam seus textos?", answers: ["Papel moderno", "Papiro", "Pergaminho de couro", "Folhas de árvore"], correct: 1, explanation: "Os egípcios escreviam em papiro, um material feito a partir de uma planta que crescia às margens do Nilo. O papiro era cortado em tiras, pressionado e secado ao sol." },
+      { question: "Como as pirâmides eram construídas?", answers: ["Com máquinas modernas", "Com blocos de pedra empilhados por milhares de trabalhadores", "Com magia dos sacerdotes", "Com ajuda de extraterrestres"], correct: 1, explanation: "As pirâmides foram construídas com blocos de pedra calcária e granito, empilhados por milhares de trabalhadores usando rampas, alavancas e rolos de madeira. Levaram décadas para serem concluídas." },
+      { question: "Qual era a função dos obeliscos no Egito Antigo?", answers: ["Marcar a entrada dos templos", "Medir o tempo", "Guardar tesouros", "Comunicar com deuses"], correct: 0, explanation: "Os obeliscos eram monumentos de pedra em forma de agulha que marcavam a entrada dos templos. Simbolizavam um raio de sol petrificado e eram dedicados aos deuses." }
+    ]
+  },
+  {
+    title: "Os Segredos da Ciência",
+    icon: "🔬",
+    description: "Descubra como os egípcios eram cientistas avançados! Da medicina à matemática, da astronomia ao calendário, eles desenvolveram conhecimentos que impressionam até hoje.",
+    questions: [
+      { question: "Os egípcios eram conhecidos por seus conhecimentos em qual área da medicina?", answers: ["Cirurgia e tratamento de feridas", "Psicologia", "Odontologia", "Oftalmologia"], correct: 0, explanation: "Os egípcios tinham avançados conhecimentos em cirurgia, tratamento de feridas, fraturas e doenças. O Papiro de Ebers contém mais de 700 receitas medicinais." },
+      { question: "Para que os egípcios usavam a matemática?", answers: ["Apenas para jogos", "Para medir terras, calcular impostos e construir pirâmides", "Para prever o futuro", "Para fazer poções mágicas"], correct: 1, explanation: "A matemática egípcia era usada para medir terras (após as cheias do Nilo), calcular impostos, distribuir alimentos e planejar as construções monumentais." },
+      { question: "Como os egípcios estudavam as estrelas?", answers: ["Usando telescópios", "Observando o céu a olho nu e registrando padrões", "Consultando oráculos", "Lendo livros de outros povos"], correct: 1, explanation: "Os egípcios estudavam o céu a olho nu, observando os movimentos das estrelas e planetas. Registravam essas observações para criar calendários e orientar construções." },
+      { question: "Quantos dias tinha o calendário egípcio?", answers: ["365 dias", "360 dias", "300 dias", "400 dias"], correct: 0, explanation: "O calendário egípcio tinha 365 dias, divididos em 12 meses de 30 dias cada, mais 5 dias extras (epagômenos). Era um dos calendários mais precisos da antiguidade." },
+      { question: "Para que servia o calendário egípcio?", answers: ["Apenas para marcar festas", "Para prever as cheias do Nilo e planejar a agricultura", "Para contar os anos do faraó", "Para prever guerras"], correct: 1, explanation: "O calendário era essencial para prever as cheias do Nilo e planejar a agricultura. Também era usado para marcar festas religiosas e organizar o trabalho no reino." },
+      { question: "Qual era a base do sistema de numeração egípcio?", answers: ["Base 2 (binário)", "Base 10 (decimal)", "Base 12", "Base 60"], correct: 1, explanation: "O sistema de numeração egípcio era decimal (base 10). Usavam símbolos diferentes para representar unidades, dezenas, centenas, milhares, dezenas de milhares e milhões." },
+      { question: "O que os egípcios sabiam sobre o corpo humano?", answers: ["Quase nada", "Muito, graças à mumificação que os familiarizava com anatomia", "Apenas sobre os ossos", "Apenas sobre o coração"], correct: 1, explanation: "Graças ao processo de mumificação, os egípcios conheciam bem a anatomia humana. Sabiam sobre órgãos, vasos sanguíneos, ossos e músculos, conhecimento que aplicavam na medicina." }
+    ]
+  },
+  {
+    title: "Revisão Final",
+    icon: "📚",
+    description: "Hora de provar tudo o que aprendeu! Esta fase revisa os principais conceitos de todas as áreas estudadas. Mostre que está pronto para ser coroado Faraó!",
+    questions: [
+      { question: "Qual era o nome da terra fértil das margens do Nilo?", answers: ["Desher", "Kemet", "Ta-Mer", "Nub"], correct: 1, explanation: "Kemet significava 'terra preta', referindo-se à cor do secremento (lama fértil) deixado pelas cheias do Nilo. Era a área onde a agricultura era possível." },
+      { question: "Quem unificou o Alto e Baixo Egito?", answers: ["Ramsés II", "Menes (Narmer)", "Tutancâmon", "Cleópatra"], correct: 1, explanation: "Menes (Narmer) unificou os dois reinos por volta de 3100 a.C., fundando a primeira dinastia egípcia e estabelecendo Memphis como capital." },
+      { question: "Qual profissão era responsável por escrever e registrar informações?", answers: ["Sacerdote", "Escriba", "Camponês", "Artesão"], correct: 1, explanation: "Os escribas eram os únicos que sabiam ler e escrever hieróglifos. Registravam impostos, contratos, decretos e textos religiosos. Era uma profissão muito respeitada." },
+      { question: "Qual deus era associado à mumificação?", answers: ["Rá", "Osíris", "Anúbis", "Hórus"], correct: 2, explanation: "Anúbis, representado com cabeça de chacal, era o deus da mumificação e do mundo dos mortos. Guiava as almas no Além e supervisionava o processo de embalsamamento." },
+      { question: "Para que serviam as pirâmides?", answers: ["Palácios dos faraós vivos", "Tumbas dos faraós mortos", "Templos dos deuses", "Armazéns de grãos"], correct: 1, explanation: "As pirâmides eram tumbas monumentais para os faraós. Acreditava-se que a forma piramidal ajudava a alma do faraó a ascender aos céus e se unir com Rá." },
+      { question: "Em que material os egípcios escreviam?", answers: ["Papel", "Papiro", "Pergaminho", "Folhas"], correct: 1, explanation: "O papiro era feito a partir de uma planta que crescia às margens do Nilo. As tiras eram colocadas em camadas cruzadas, pressionadas e secadas ao sol." },
+      { question: "Quantos dias tinha o calendário egípcio?", answers: ["360", "365", "300", "400"], correct: 1, explanation: "O calendário egípcio tinha 365 dias: 12 meses de 30 dias cada, mais 5 dias extras (epagômenos). Era usado para prever as cheias do Nilo e organizar a agricultura." }
+    ]
+  }
+];
+
+// ---- AUDIO (Web Audio API) ----
+let audioCtx = null;
+
+function getAudioContext() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function playSound(type) {
+  if (!gameState.soundEnabled) return;
+  try {
+    const ctx = getAudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    if (type === 'correct') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(523, ctx.currentTime);
+      osc.frequency.setValueAtTime(659, ctx.currentTime + 0.1);
+      osc.frequency.setValueAtTime(784, ctx.currentTime + 0.2);
+      gain.gain.setValueAtTime(0.3, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.4);
+    } else if (type === 'wrong') {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(200, ctx.currentTime);
+      osc.frequency.setValueAtTime(150, ctx.currentTime + 0.15);
+      gain.gain.setValueAtTime(0.2, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.3);
+    } else if (type === 'advance') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(440, ctx.currentTime);
+      osc.frequency.setValueAtTime(554, ctx.currentTime + 0.1);
+      osc.frequency.setValueAtTime(659, ctx.currentTime + 0.2);
+      osc.frequency.setValueAtTime(880, ctx.currentTime + 0.3);
+      gain.gain.setValueAtTime(0.25, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.5);
+    } else if (type === 'win') {
+      osc.type = 'sine';
+      [523, 659, 784, 1047].forEach((freq, i) => {
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.15);
+      });
+      gain.gain.setValueAtTime(0.3, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.8);
+    }
+  } catch (e) { console.log('Audio error:', e); }
+}
+
+// ---- SCREEN MANAGEMENT ----
+function showScreen(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+}
+
+function showStartScreen() {
+  showScreen('screen-start');
+}
+
+// ---- GAME LOGIC ----
+function startGame() {
+  gameState = {
+    currentPhase: 0,
+    currentQuestion: 0,
+    correctCount: 0,
+    wrongCount: 0,
+    kingdomItems: [false, false, false, false, false, false],
+    soundEnabled: gameState.soundEnabled,
+    answeredCurrent: false,
+    phaseIntroShown: false
+  };
+  updateUI();
+  showPhaseIntro();
+}
+
+function restartGame() {
+  startGame();
+}
+
+function showPhaseIntro() {
+  const phase = phases[gameState.currentPhase];
+  document.getElementById('phase-number').textContent = 'FASE ' + (gameState.currentPhase + 1);
+  document.getElementById('phase-icon').textContent = phase.icon;
+  document.getElementById('phase-title').textContent = phase.title;
+  document.getElementById('phase-description').textContent = phase.description;
+  showScreen('screen-phase');
+  playSound('advance');
+  updateTimeline();
+}
+
+function startPhaseQuestions() {
+  gameState.currentQuestion = 0;
+  gameState.answeredCurrent = false;
+  gameState.phaseIntroShown = true;
+  showQuestion();
+}
+
+function showQuestion() {
+  const phase = phases[gameState.currentPhase];
+  const q = phase.questions[gameState.currentQuestion];
+
+  document.getElementById('question-number').textContent = 
+    'Pergunta ' + (gameState.currentQuestion + 1) + ' de ' + phase.questions.length;
+  document.getElementById('question-text').textContent = q.question;
+
+  const container = document.getElementById('answers-container');
+  container.innerHTML = '';
+
+  const letters = ['A', 'B', 'C', 'D'];
+  q.answers.forEach((ans, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'answer-btn';
+    btn.innerHTML = '<span class="letter">' + letters[i] + '</span><span>' + ans + '</span>';
+    btn.onclick = () => selectAnswer(i);
+    container.appendChild(btn);
+  });
+
+  const feedback = document.getElementById('feedback-area');
+  feedback.classList.remove('show', 'correct', 'wrong');
+
+  showScreen('screen-question');
+}
+
+function selectAnswer(index) {
+  if (gameState.answeredCurrent) return;
+  gameState.answeredCurrent = true;
+
+  const phase = phases[gameState.currentPhase];
+  const q = phase.questions[gameState.currentQuestion];
+  const isCorrect = index === q.correct;
+
+  const buttons = document.querySelectorAll('.answer-btn');
+  buttons.forEach((btn, i) => {
+    btn.classList.add('disabled');
+    if (i === q.correct) btn.classList.add('correct');
+    else if (i === index && !isCorrect) btn.classList.add('wrong');
+  });
+
+  const feedback = document.getElementById('feedback-area');
+  feedback.classList.add('show');
+
+  if (isCorrect) {
+    gameState.correctCount++;
+    feedback.classList.add('correct');
+    document.getElementById('feedback-title').innerHTML = '✅ Resposta Correta!';
+    playSound('correct');
+
+    // Unlock kingdom item
+    const totalCorrect = gameState.correctCount;
+    const itemIndex = Math.min(Math.floor((totalCorrect - 1) / 7), 5);
+    if (itemIndex >= 0 && !gameState.kingdomItems[itemIndex]) {
+      gameState.kingdomItems[itemIndex] = true;
+      showReward(itemIndex);
+    }
+
+  } else {
+    gameState.wrongCount++;
+    feedback.classList.add('wrong');
+    document.getElementById('feedback-title').innerHTML = '❌ Resposta Errada!';
+    playSound('wrong');
+    showConsequence();
+  }
+
+  document.getElementById('feedback-text').textContent = q.explanation;
+  updateUI();
+  updateProgress();
+}
+
+function showConsequence() {
+  const consequence = consequences[Math.floor(Math.random() * consequences.length)];
+  const overlay = document.getElementById('consequence-overlay');
+  const content = document.getElementById('consequence-content');
+  const text = document.getElementById('consequence-text');
+
+  content.className = consequence.className;
+  text.textContent = consequence.text;
+  overlay.classList.add('show');
+
+  // Create sand particles for sandstorm
+  if (consequence.type === 'sandstorm') {
+    const particles = document.createElement('div');
+    particles.className = 'sandstorm-particles';
+    for (let i = 0; i < 30; i++) {
+      const p = document.createElement('div');
+      p.className = 'sand-particle';
+      p.style.top = Math.random() * 100 + '%';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.animationDelay = Math.random() * 0.5 + 's';
+      particles.appendChild(p);
+    }
+    content.appendChild(particles);
+  }
+
+  setTimeout(() => {
+    overlay.classList.remove('show');
+    content.innerHTML = '';
+  }, 1500);
+}
+
+function showReward(itemIndex) {
+  const item = kingdomItemsData[itemIndex];
+  const overlay = document.getElementById('reward-overlay');
+  document.getElementById('reward-item').textContent = item.icon;
+  document.getElementById('reward-text').textContent = '✨ ' + item.name + ' desbloqueado!';
+  overlay.classList.add('show');
+  playSound('advance');
+  setTimeout(() => overlay.classList.remove('show'), 1500);
+}
+
+function nextQuestion() {
+  gameState.answeredCurrent = false;
+  const phase = phases[gameState.currentPhase];
+
+  if (gameState.currentQuestion < phase.questions.length - 1) {
+    gameState.currentQuestion++;
+    showQuestion();
+  } else {
+    // Phase complete
+    if (gameState.currentPhase < phases.length - 1) {
+      gameState.currentPhase++;
+      showPhaseIntro();
+    } else {
+      showEndScreen();
+    }
+  }
+}
+
+function showEndScreen() {
+  const total = gameState.correctCount + gameState.wrongCount;
+  const percent = total > 0 ? Math.round((gameState.correctCount / total) * 100) : 0;
+
+  let result, message;
+  if (percent === 100) {
+    result = '👑 Você foi coroado Faraó do Alto e Baixo Egito!';
+    message = 'Parabéns! Você dominou todos os conhecimentos do Antigo Egito e provou ser digno do trono. Seu reino prosperará por eras! 🏺✨';
+  } else if (percent >= 80) {
+    result = '⚖️ Você tornou-se um grande Vizir!';
+    message = 'Excelente desempenho! Você demonstrou grande sabedoria e será um conselheiro de confiança do Faraó. Continue estudando para alcançar o trono! 📜';
+  } else if (percent >= 60) {
+    result = '🔮 Você é um respeitado Sacerdote!';
+    message = 'Bom trabalho! Você tem conhecimento sólido sobre o Egito Antigo, mas ainda há muito a aprender. Estude mais para subir na hierarquia! 🏛️';
+  } else {
+    result = '💔 Seu reino precisa de um novo governante. Estude e tente novamente!';
+    message = 'Não desista! O caminho para o trono é longo. Revise os conteúdos sobre o Egito Antigo e tente novamente. A sabedoria vem com a persistência! 📚';
+  }
+
+  document.getElementById('end-result').textContent = result;
+  document.getElementById('end-correct').textContent = gameState.correctCount;
+  document.getElementById('end-wrong').textContent = gameState.wrongCount;
+  document.getElementById('end-percent').textContent = percent + '%';
+  document.getElementById('end-phases').textContent = '7/7';
+  document.getElementById('end-message').textContent = message;
+
+  // Build kingdom items
+  const kingdomContainer = document.getElementById('end-kingdom-items');
+  kingdomContainer.innerHTML = '';
+  kingdomItemsData.forEach((item, i) => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'end-kingdom-item-wrapper';
+    const icon = document.createElement('div');
+    icon.className = 'end-kingdom-item' + (gameState.kingdomItems[i] ? ' unlocked' : '');
+    icon.textContent = item.icon;
+    const name = document.createElement('div');
+    name.className = 'end-kingdom-item-name';
+    name.textContent = item.name;
+    wrapper.appendChild(icon);
+    wrapper.appendChild(name);
+    kingdomContainer.appendChild(wrapper);
+  });
+
+  showScreen('screen-end');
+  playSound('win');
+}
+
+// ---- UI UPDATES ----
+function updateUI() {
+  document.getElementById('score-correct').textContent = gameState.correctCount;
+  document.getElementById('score-wrong').textContent = gameState.wrongCount;
+  const total = gameState.correctCount + gameState.wrongCount;
+  const percent = total > 0 ? Math.round((gameState.correctCount / total) * 100) : 0;
+  document.getElementById('score-percent').textContent = percent;
+
+  // Update kingdom display
+  document.querySelectorAll('.kingdom-item').forEach((item, i) => {
+    if (gameState.kingdomItems[i]) item.classList.add('unlocked');
+  });
+}
+
+function updateProgress() {
+  const totalQuestions = phases.reduce((sum, p) => sum + p.questions.length, 0);
+  const answered = gameState.correctCount + gameState.wrongCount;
+  const progress = (answered / totalQuestions) * 100;
+  document.getElementById('progress-fill').style.width = progress + '%';
+
+  // Update rank
+  const rankIndex = Math.min(Math.floor((answered / totalQuestions) * 6), 5);
+  document.getElementById('current-rank').textContent = ranks[rankIndex];
+
+  document.querySelectorAll('.progress-mark').forEach((mark, i) => {
+    mark.classList.toggle('active', i <= rankIndex);
+  });
+}
+
+function updateTimeline() {
+  const totalQuestions = phases.reduce((sum, p) => sum + p.questions.length, 0);
+  let answered = 0;
+  for (let i = 0; i < gameState.currentPhase; i++) {
+    answered += phases[i].questions.length;
+  }
+  answered += gameState.currentQuestion;
+  const progress = (answered / totalQuestions) * 100;
+  document.getElementById('timeline-line').style.width = progress + '%';
+
+  document.querySelectorAll('.timeline-node').forEach((node, i) => {
+    node.classList.remove('current', 'completed');
+    if (i < gameState.currentPhase) node.classList.add('completed');
+    else if (i === gameState.currentPhase) node.classList.add('current');
+  });
+}
+
+function toggleSound() {
+  gameState.soundEnabled = !gameState.soundEnabled;
+  document.getElementById('sound-btn').textContent = gameState.soundEnabled ? '🔊' : '🔇';
+}
+
+// ---- INIT ----
+updateUI();
+updateProgress();
+updateTimeline();
+</script>
+</body>
+</html>
